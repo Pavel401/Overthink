@@ -169,7 +169,36 @@ class _EditNoteState extends State<EditNote> {
         backgroundColor: AppColors.backgroundColor,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        backgroundColor: AppColors.WowGrey,
+                        title: Text("Do you want to delete the note?",
+                            style: GoogleFonts.inter(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.WowWhite,
+                            )),
+                        content: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  removeNote(widget.index);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Yes")),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                child: Text("Cancel"))
+                          ],
+                        ),
+                      ));
+            },
             icon: Icon(
               Icons.delete_outline,
               size: 30,
