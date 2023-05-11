@@ -148,14 +148,14 @@ class _AddNoteState extends State<AddNote> {
         elevation: 0,
         backgroundColor: AppColors.backgroundColor,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.delete_outline,
-              size: 30,
-              color: AppColors.WowWhite,
-            ),
-          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: Icon(
+          //     Icons.save_alt_outlined,
+          //     size: 30,
+          //     color: AppColors.WowWhite,
+          //   ),
+          // ),
         ],
         centerTitle: true,
         leading: IconButton(

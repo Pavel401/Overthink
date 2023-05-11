@@ -1,4 +1,4 @@
-package com.example.overthink
+package com.Overthink.app
 
 import io.flutter.embedding.android.FlutterActivity
 

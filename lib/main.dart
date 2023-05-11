@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:overthink/views/HomeView.dart';
+import 'package:overthink/views/Splash.dart';
 import 'package:sizer/sizer.dart';
 
 void main() {
