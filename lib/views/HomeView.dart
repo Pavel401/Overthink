@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -164,142 +165,231 @@ class _HomeViewState extends State<HomeView> {
                 ],
               ),
             )
-          : ListView.builder(
-              itemBuilder: (context, index) {
-                DateTime dateTime =
-                    DateTime.parse(notes[index].time.toString());
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        DateTime dateTime =
+                            DateTime.parse(notes[index].time.toString());
 
-                int year = dateTime.year;
-                int month = dateTime.month;
-                int day = dateTime.day;
-                return Bounceable(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditNote(
-                          index: index,
-                          note: notes[index],
-                        ),
-                      ),
-                    ).then((value) {
-                      setState(() {});
-                      loadNotes();
-                    });
-                  },
-                  child: FadeInLeftBig(
-                    child: Container(
-                      height: 15.h,
-                      width: 100.w,
-                      margin: EdgeInsets.only(
-                          left: 5.w, right: 5.w, top: 2.h, bottom: 1.h),
-                      padding: EdgeInsets.only(
-                        left: 4.w,
-                        right: 4.w,
-                        top: 2.h,
-                      ),
-                      decoration: BoxDecoration(
-                        // color: AppColors.WowGrey,
+                        int year = dateTime.year;
+                        int month = dateTime.month;
+                        int day = dateTime.day;
+                        return Bounceable(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditNote(
+                                  index: index,
+                                  note: notes[index],
+                                ),
+                              ),
+                            ).then((value) {
+                              setState(() {});
+                              loadNotes();
+                            });
+                          },
+                          child: FadeInLeftBig(
+                            child: Container(
+                              height: 15.h,
+                              width: 100.w,
+                              margin: EdgeInsets.only(
+                                  left: 5.w, right: 5.w, top: 2.h, bottom: 1.h),
+                              padding: EdgeInsets.only(
+                                left: 4.w,
+                                right: 4.w,
+                                top: 2.h,
+                              ),
+                              decoration: BoxDecoration(
+                                // color: AppColors.WowGrey,
 
-                        color: AppColors.cardColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                width: 60.w,
-                                child: Text(
-                                  notes[index].title,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w800,
-                                    color: AppColors.WowWhite,
+                                color: AppColors.cardColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: 60.w,
+                                        child: Text(
+                                          notes[index].title,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w800,
+                                            color: AppColors.WowWhite,
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                      backgroundColor:
+                                                          AppColors.WowGrey,
+                                                      title: Text(
+                                                          "Do you want to delete the note?",
+                                                          style:
+                                                              GoogleFonts.inter(
+                                                            fontSize: 12.sp,
+                                                            fontWeight:
+                                                                FontWeight.w900,
+                                                            color: AppColors
+                                                                .WowWhite,
+                                                          )),
+                                                      content: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          ElevatedButton(
+                                                              onPressed: () {
+                                                                var _type =
+                                                                    FeedbackType
+                                                                        .success;
+                                                                Vibrate
+                                                                    .feedback(
+                                                                        _type);
+                                                                removeNote(
+                                                                    index);
+
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child:
+                                                                  Text("Yes")),
+                                                          ElevatedButton(
+                                                              onPressed: () {
+                                                                Get.back();
+                                                              },
+                                                              child: Text(
+                                                                  "Cancel"))
+                                                        ],
+                                                      ),
+                                                    ));
+                                          },
+                                          icon: Icon(
+                                            Icons.delete_outlined,
+                                            color: AppColors.WowWhite,
+                                          ))
+                                    ],
                                   ),
-                                ),
+                                  // Text(
+                                  //   notes[index].note1,
+                                  //   maxLines: 2,
+                                  //   style: GoogleFonts.inter(
+                                  //     fontSize: 12.sp,
+                                  //     fontWeight: FontWeight.w400,
+                                  //     color: AppColors.backgroundColor,
+                                  //   ),
+                                  // ),
+                                  SizedBox(
+                                    height: 2.h,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "$day/$month/$year",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.WowWhite,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
-                              IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                              backgroundColor:
-                                                  AppColors.WowGrey,
-                                              title: Text(
-                                                  "Do you want to delete the note?",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 12.sp,
-                                                    fontWeight: FontWeight.w900,
-                                                    color: AppColors.WowWhite,
-                                                  )),
-                                              content: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  ElevatedButton(
-                                                      onPressed: () {
-                                                        var _type = FeedbackType
-                                                            .success;
-                                                        Vibrate.feedback(_type);
-                                                        removeNote(index);
-
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text("Yes")),
-                                                  ElevatedButton(
-                                                      onPressed: () {
-                                                        Get.back();
-                                                      },
-                                                      child: Text("Cancel"))
-                                                ],
-                                              ),
-                                            ));
-                                  },
-                                  icon: Icon(
-                                    Icons.delete_outlined,
-                                    color: AppColors.WowWhite,
-                                  ))
-                            ],
+                            ),
                           ),
-                          // Text(
-                          //   notes[index].note1,
-                          //   maxLines: 2,
-                          //   style: GoogleFonts.inter(
-                          //     fontSize: 12.sp,
-                          //     fontWeight: FontWeight.w400,
-                          //     color: AppColors.backgroundColor,
-                          //   ),
-                          // ),
-                          SizedBox(
-                            height: 2.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                "$day/$month/$year",
-                                style: GoogleFonts.inter(
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.WowWhite,
-                                ),
+                        );
+                      },
+                      itemCount: notes.length),
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext dialogcontext) {
+                          return AlertDialog(
+                              backgroundColor: AppColors.WowGrey,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              title: const Text(
+                                "Privacy Policy",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
-                            ],
-                          )
-                        ],
-                      ),
+                              content: Container(
+                                height: 480,
+                                width: 400,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 400,
+                                      width: 400,
+                                      child: FutureBuilder(
+                                        future: DefaultAssetBundle.of(context)
+                                            .loadString(
+                                                'assets/privacy_policy.md'),
+                                        builder: ((context, snapshot) {
+                                          return Markdown(
+                                            data: snapshot.data.toString(),
+                                            styleSheet: MarkdownStyleSheet(
+                                                p: TextStyle(
+                                                    color: Colors.white)),
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                    ElevatedButton.icon(
+                                        // style: ButtonStyle(
+                                        //     backgroundColor:
+                                        //         MaterialStateProperty.all(
+                                        //             theme.secondaryColor)),
+                                        onPressed: () {
+                                          Navigator.pop(dialogcontext);
+                                        },
+                                        icon: const Icon(Icons.check),
+                                        label: const Text("Ok"))
+                                  ],
+                                ),
+                              ));
+                        });
+                  },
+                  child: Text(
+                    "Privacy Policy",
+                    style: GoogleFonts.inter(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.WowBlue,
                     ),
                   ),
-                );
-              },
-              itemCount: notes.length),
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+              ],
+            ),
     );
   }
 }
