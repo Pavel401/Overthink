@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -109,241 +110,416 @@ class _EditNoteState extends State<EditNote> {
     await saveNotes();
   }
 
+  bool isActiveFirst = false;
+  bool isActiveSecond = false;
+  bool isActiveThird = false;
+  bool isActiveFourth = false;
+  // Future<bool> _onBackPressed() async {
+  //   return await showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           backgroundColor: AppColors.WowGrey,
+  //           title: Text("Do you want to save the Note?",
+  //               style: GoogleFonts.inter(
+  //                 fontSize: 12.sp,
+  //                 fontWeight: FontWeight.w900,
+  //                 color: AppColors.WowWhite,
+  //               )),
+  //           content: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               ElevatedButton(
+  //                   onPressed: () {
+  //                     if (NoteTitleController.text.isNotEmpty) {
+  //                       if (note1.text.isNotEmpty ||
+  //                           note2.text.isNotEmpty ||
+  //                           note3.text.isNotEmpty ||
+  //                           note4.text.isNotEmpty) {
+  //                         var _type = FeedbackType.success;
+  //                         Vibrate.feedback(_type);
+  //                         updateNote(
+  //                             widget.index,
+  //                             Note(
+  //                               title: NoteTitleController.text,
+  //                               note1: note1.text,
+  //                               note2: note2.text,
+  //                               note3: note3.text,
+  //                               note4: note4.text,
+  //                               time: DateTime.now(),
+  //                             ));
+  //                         Navigator.pop(context);
+  //                         Navigator.pop(context);
+
+  //                         NoteTitleController.text = "";
+
+  //                         note1.text = "";
+  //                         note2.text = "";
+  //                         note3.text = "";
+  //                         note4.text = "";
+  //                       } else {
+  //                         ScaffoldMessenger.of(context).showSnackBar(
+  //                           const SnackBar(
+  //                               content: Text('Write atleast one note')),
+  //                         );
+  //                         Get.back();
+  //                       }
+  //                     } else {
+  //                       ScaffoldMessenger.of(context).showSnackBar(
+  //                         const SnackBar(content: Text('Enter Title')),
+  //                       );
+  //                       Get.back();
+  //                     }
+  //                   },
+  //                   child: Text("Yes")),
+  //               ElevatedButton(
+  //                   onPressed: () {
+  //                     Get.back();
+  //                     Get.back();
+  //                   },
+  //                   child: Text("Cancel"))
+  //             ],
+  //           ),
+  //         );
+  //       });
+  // }
+
+  Future<bool> _onBackPressed() async {
+    var _type = FeedbackType.success;
+    Vibrate.feedback(_type);
+
+    if (NoteTitleController.text.isEmpty) {
+      NoteTitleController.text = "Note " + widget.index.toString();
+    }
+    updateNote(
+        widget.index,
+        Note(
+          title: NoteTitleController.text,
+          note1: note1.text,
+          note2: note2.text,
+          note3: note3.text,
+          note4: note4.text,
+          time: DateTime.now(),
+        ));
+    note1.text = "";
+    note2.text = "";
+    note3.text = "";
+    note4.text = "";
+    Navigator.pop(context);
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: GestureDetector(
-        onTap: () async {
-          // saveNote();
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        // floatingActionButton: GestureDetector(
+        //   onTap: () async {
+        //     // saveNote();
 
-          showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    backgroundColor: AppColors.WowGrey,
-                    title: Text("Do you want to save the changes?",
-                        style: GoogleFonts.inter(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.WowWhite,
-                        )),
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              updateNote(
-                                  widget.index,
-                                  Note(
-                                    title: NoteTitleController.text,
-                                    note1: note1.text,
-                                    note2: note2.text,
-                                    note3: note3.text,
-                                    note4: note4.text,
-                                    time: DateTime.now(),
-                                  ));
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                            child: Text("Yes")),
-                        ElevatedButton(
-                            onPressed: () {
-                              Get.back();
-                            },
-                            child: Text("Cancel"))
-                      ],
-                    ),
-                  ));
-        },
-        child: CircleAvatar(
-            backgroundColor: AppColors.WowGrey,
-            radius: 30,
-            child: Icon(
-              Icons.save,
-              size: 30,
-              color: AppColors.WowWhite,
-            )),
-      ),
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColors.backgroundColor,
-        actions: [
-          IconButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        backgroundColor: AppColors.WowGrey,
-                        title: Text("Do you want to delete the note?",
-                            style: GoogleFonts.inter(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w900,
-                              color: AppColors.WowWhite,
-                            )),
-                        content: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  removeNote(widget.index);
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                },
-                                child: Text("Yes")),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                child: Text("Cancel"))
-                          ],
-                        ),
-                      ));
-            },
-            icon: Icon(
-              Icons.delete_outline,
-              size: 30,
-              color: AppColors.WowWhite,
+        //     // showDialog(
+        //     //     context: context,
+        //     //     builder: (context) => AlertDialog(
+        //     //           backgroundColor: AppColors.WowGrey,
+        //     //           title: Text("Do you want to save the changes?",
+        //     //               style: GoogleFonts.inter(
+        //     //                 fontSize: 12.sp,
+        //     //                 fontWeight: FontWeight.w900,
+        //     //                 color: AppColors.WowWhite,
+        //     //               )),
+        //     //           content: Row(
+        //     //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     //             children: [
+        //     //               ElevatedButton(
+        //     //                   onPressed: () {
+        //     //                     var _type = FeedbackType.success;
+        //     //                     Vibrate.feedback(_type);
+        //     //                     updateNote(
+        //     //                         widget.index,
+        //     //                         Note(
+        //     //                           title: NoteTitleController.text,
+        //     //                           note1: note1.text,
+        //     //                           note2: note2.text,
+        //     //                           note3: note3.text,
+        //     //                           note4: note4.text,
+        //     //                           time: DateTime.now(),
+        //     //                         ));
+        //     //                     Navigator.pop(context);
+        //     //                     Navigator.pop(context);
+        //     //                   },
+        //     //                   child: Text("Yes")),
+        //     //               ElevatedButton(
+        //     //                   onPressed: () {
+        //     //                     var _type = FeedbackType.error;
+        //     //                     Vibrate.feedback(_type);
+        //     //                     Get.back();
+        //     //                     Get.back();
+        //     //                   },
+        //     //                   child: Text("Cancel"))
+        //     //             ],
+        //     //           ),
+        //     //         ));
+
+        //     var _type = FeedbackType.success;
+        //     Vibrate.feedback(_type);
+
+        //     if (NoteTitleController.text.isEmpty) {
+        //       NoteTitleController.text = "Note " + widget.index.toString();
+        //     }
+        //     updateNote(
+        //         widget.index,
+        //         Note(
+        //           title: NoteTitleController.text,
+        //           note1: note1.text,
+        //           note2: note2.text,
+        //           note3: note3.text,
+        //           note4: note4.text,
+        //           time: DateTime.now(),
+        //         ));
+        //     note1.text = "";
+        //     note2.text = "";
+        //     note3.text = "";
+        //     note4.text = "";
+        //     Navigator.pop(context);
+        //   },
+        //   child: CircleAvatar(
+        //       backgroundColor: AppColors.WowGrey,
+        //       radius: 30,
+        //       child: Icon(
+        //         Icons.save,
+        //         size: 30,
+        //         color: AppColors.WowWhite,
+        //       )),
+        // ),
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: AppColors.backgroundColor,
+          actions: [
+            IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          backgroundColor: AppColors.WowGrey,
+                          title: Text("Do you want to delete the note?",
+                              style: GoogleFonts.inter(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w900,
+                                color: AppColors.WowWhite,
+                              )),
+                          content: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    var _type = FeedbackType.success;
+                                    Vibrate.feedback(_type);
+                                    removeNote(widget.index);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Yes")),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Get.back();
+                                    Get.back();
+                                  },
+                                  child: Text("Cancel"))
+                            ],
+                          ),
+                        ));
+              },
+              icon: Icon(
+                Icons.delete_outline,
+                size: 30,
+                color: AppColors.WowWhite,
+              ),
             ),
-          ),
-        ],
-        // title: Text(
-        //   "Notes",
-        // style: GoogleFonts.inter(
-        //   fontSize: 18.sp,
-        //   fontWeight: FontWeight.w900,
-        //   color: AppColors.WowWhite,
-        // ),
-        // ),
-        centerTitle: true,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.chevron_left_outlined,
-              size: 30,
-              color: AppColors.WowWhite,
-            )),
-        title: SizedBox(
-          width: 150.sp,
-          child: TextFormField(
-            controller: NoteTitleController,
-            maxLines: 1,
-            maxLength: 15,
-            style: GoogleFonts.inter(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w900,
-              color: AppColors.WowWhite,
+          ],
+          // title: Text(
+          //   "Notes",
+          // style: GoogleFonts.inter(
+          //   fontSize: 18.sp,
+          //   fontWeight: FontWeight.w900,
+          //   color: AppColors.WowWhite,
+          // ),
+          // ),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: _onBackPressed,
+              icon: Icon(
+                Icons.chevron_left_outlined,
+                size: 30,
+                color: AppColors.WowWhite,
+              )),
+          title: SizedBox(
+            width: 150.sp,
+            child: TextFormField(
+              controller: NoteTitleController,
+              maxLines: 1,
+              // maxLength: 15,
+              style: GoogleFonts.inter(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w900,
+                color: AppColors.WowWhite,
+              ),
             ),
           ),
         ),
-      ),
-      backgroundColor: AppColors.backgroundColor,
-      body: Form(
-        key: key,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    height: 42.h,
-                    width: 45.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundColor,
-                      border: Border.all(color: AppColors.WowWhite),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                      maxLines: 100,
-                      cursorColor: AppColors.WowBlue,
-                      style: GoogleFonts.inter(
-                        color: AppColors.WowBlue,
+        backgroundColor: AppColors.backgroundColor,
+        body: Form(
+          key: key,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView(
+              // mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: 42.h,
+                      width: 45.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundColor,
+                        border: Border.all(
+                          color: AppColors.borderColor,
+                          width: isActiveFirst ? 4 : 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      controller: note1,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 42.h,
-                    width: 45.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundColor,
-                      border: Border.all(color: AppColors.WowWhite),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                      cursorColor: AppColors.WowPink,
-                      maxLines: 100,
-                      style: GoogleFonts.inter(
-                        color: AppColors.WowPink,
-                      ),
-                      controller: note2,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
+                      padding: EdgeInsets.only(left: 2.w, right: 2.w),
+                      child: TextFormField(
+                        maxLines: 100,
+                        cursorColor: AppColors.WowBlue,
+                        onTap: () {
+                          setState(() {
+                            isActiveFirst = !isActiveFirst;
+                            isActiveSecond = false;
+                            isActiveThird = false;
+                            isActiveFourth = false;
+                          });
+                        },
+                        style: GoogleFonts.inter(
+                          color: AppColors.WowBlue,
+                        ),
+                        controller: note1,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 2.h,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    height: 42.h,
-                    width: 45.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundColor,
-                      border: Border.all(color: AppColors.WowWhite),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                      maxLines: 100,
-                      cursorColor: AppColors.WowGreen,
-                      style: GoogleFonts.inter(
-                        color: AppColors.WowGreen,
+                    Container(
+                      height: 42.h,
+                      width: 45.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundColor,
+                        border: Border.all(
+                          color: AppColors.borderColor,
+                          width: isActiveSecond ? 4 : 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      controller: note3,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 42.h,
-                    width: 45.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundColor,
-                      border: Border.all(color: AppColors.WowWhite),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                      maxLines: 100,
-                      cursorColor: AppColors.WowYellow,
-                      style: GoogleFonts.inter(
-                        color: AppColors.WowYellow,
-                      ),
-                      controller: note4,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
+                      padding: EdgeInsets.only(left: 2.w, right: 2.w),
+                      child: TextFormField(
+                        cursorColor: AppColors.WowPink,
+                        maxLines: 100,
+                        style: GoogleFonts.inter(
+                          color: AppColors.WowPink,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            isActiveFirst = false;
+                            isActiveSecond = !isActiveSecond;
+                            isActiveThird = false;
+                            isActiveFourth = false;
+                          });
+                        },
+                        controller: note2,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      height: 42.h,
+                      width: 45.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundColor,
+                        border: Border.all(
+                          color: AppColors.borderColor,
+                          width: isActiveThird ? 4 : 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.only(left: 2.w, right: 2.w),
+                      child: TextFormField(
+                        maxLines: 100,
+                        cursorColor: AppColors.WowGreen,
+                        style: GoogleFonts.inter(
+                          color: AppColors.WowGreen,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            isActiveFirst = false;
+                            isActiveSecond = false;
+                            isActiveThird = !isActiveThird;
+                            isActiveFourth = false;
+                          });
+                        },
+                        controller: note3,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 42.h,
+                      width: 45.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundColor,
+                        border: Border.all(
+                          color: AppColors.borderColor,
+                          width: isActiveFourth ? 4 : 1,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.only(left: 2.w, right: 2.w),
+                      child: TextFormField(
+                        maxLines: 100,
+                        cursorColor: AppColors.WowYellow,
+                        style: GoogleFonts.inter(
+                          color: AppColors.WowYellow,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            isActiveFirst = false;
+                            isActiveSecond = false;
+                            isActiveThird = false;
+                            isActiveFourth = !isActiveFourth;
+                          });
+                        },
+                        controller: note4,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

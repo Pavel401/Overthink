@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -27,6 +28,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   List<Note> notes = [];
 
+  int totalNotes = 0;
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,8 @@ class _HomeViewState extends State<HomeView> {
     setState(() {
       notes = loadedNotes;
     });
+
+    totalNotes = notes.length;
   }
 
   init() {}
@@ -105,19 +109,23 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context)
-                  .push(
-                SplashRoute(
-                  targetPage: AddNote(),
-                  splashColor: AppColors.WowWhite,
-                  startFractionalOffset: FractionalOffset.topRight,
-                  transitionDuration: Duration(milliseconds: 1000),
-                ),
-              )
-                  .then((value) {
+              var _type = FeedbackType.selection;
+              Vibrate.feedback(_type);
+              // Navigator.of(context)
+              //     .push(MaterialPageRoute(builder: AddNote()))
+              //     .then((value) {
+              //   loadNotes();
+              // });
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AddNote(
+                          noteNo: totalNotes + 1,
+                        )),
+              ).then((value) {
+                setState(() {});
                 loadNotes();
               });
-
               // Navigator.push(context, _createRoute()).then((value) {
               //   loadNotes();
               // });
@@ -166,53 +174,34 @@ class _HomeViewState extends State<HomeView> {
                 int day = dateTime.day;
                 return Bounceable(
                   onTap: () {
-                    Navigator.of(context)
-                        .push(
-                      SplashRoute(
-                        targetPage: EditNote(
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditNote(
                           index: index,
                           note: notes[index],
                         ),
-                        splashColor: AppColors.WowWhite,
-                        startFractionalOffset: FractionalOffset.center,
-                        transitionDuration: Duration(milliseconds: 1000),
                       ),
-                    )
-                        .then((value) {
+                    ).then((value) {
                       setState(() {});
                       loadNotes();
                     });
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => EditNote(
-                    //       index: index,
-                    //       note: notes[index],
-                    //     ),
-                    //   ),
-                    // ).then((value) {
-                    // setState(() {});
-                    // loadNotes();
-                    // });
                   },
                   child: FadeInLeftBig(
                     child: Container(
-                      height: 20.h,
+                      height: 15.h,
                       width: 100.w,
                       margin: EdgeInsets.only(
-                        left: 5.w,
-                        right: 5.w,
-                        top: 2.h,
-                      ),
+                          left: 5.w, right: 5.w, top: 2.h, bottom: 1.h),
                       padding: EdgeInsets.only(
-                        left: 5.w,
-                        right: 5.w,
+                        left: 4.w,
+                        right: 4.w,
                         top: 2.h,
                       ),
                       decoration: BoxDecoration(
                         // color: AppColors.WowGrey,
 
-                        color: getRandomColor(),
+                        color: AppColors.cardColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -231,31 +220,65 @@ class _HomeViewState extends State<HomeView> {
                                   style: GoogleFonts.inter(
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w800,
-                                    color: AppColors.backgroundColor,
+                                    color: AppColors.WowWhite,
                                   ),
                                 ),
                               ),
                               IconButton(
                                   onPressed: () {
-                                    removeNote(index);
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                              backgroundColor:
+                                                  AppColors.WowGrey,
+                                              title: Text(
+                                                  "Do you want to delete the note?",
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 12.sp,
+                                                    fontWeight: FontWeight.w900,
+                                                    color: AppColors.WowWhite,
+                                                  )),
+                                              content: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        var _type = FeedbackType
+                                                            .success;
+                                                        Vibrate.feedback(_type);
+                                                        removeNote(index);
+
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("Yes")),
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        Get.back();
+                                                      },
+                                                      child: Text("Cancel"))
+                                                ],
+                                              ),
+                                            ));
                                   },
                                   icon: Icon(
                                     Icons.delete_outlined,
-                                    color: AppColors.backgroundColor,
+                                    color: AppColors.WowWhite,
                                   ))
                             ],
                           ),
-                          Text(
-                            notes[index].note1,
-                            maxLines: 2,
-                            style: GoogleFonts.inter(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.backgroundColor,
-                            ),
-                          ),
+                          // Text(
+                          //   notes[index].note1,
+                          //   maxLines: 2,
+                          //   style: GoogleFonts.inter(
+                          //     fontSize: 12.sp,
+                          //     fontWeight: FontWeight.w400,
+                          //     color: AppColors.backgroundColor,
+                          //   ),
+                          // ),
                           SizedBox(
-                            height: 5.h,
+                            height: 2.h,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -265,7 +288,7 @@ class _HomeViewState extends State<HomeView> {
                                 style: GoogleFonts.inter(
                                   fontSize: 10.sp,
                                   fontWeight: FontWeight.w400,
-                                  color: AppColors.backgroundColor,
+                                  color: AppColors.WowWhite,
                                 ),
                               ),
                             ],
